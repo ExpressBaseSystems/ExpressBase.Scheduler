@@ -16,17 +16,6 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Scheduler.Jobs
 {
-    public class EbJobArgs
-    {
-        public int ObjId { get; set; }
-
-        public List<Param> Params { get; set; }
-
-        public string SolnId { get; set; }
-
-        public int UserId { get; set; }
-    }
-
     public class MyJob : IJob
     {
         public Task Execute(IJobExecutionContext context)
@@ -35,12 +24,12 @@ namespace ExpressBase.Scheduler.Jobs
             return context.AsTaskResult();
         }
     }
-    
+
     public abstract class EbJob
     {
         private RabbitMqProducer _msqProducer = null;
 
-       protected RabbitMqProducer MessageProducer
+        protected RabbitMqProducer MessageProducer
         {
             get
             {
@@ -59,5 +48,4 @@ namespace ExpressBase.Scheduler.Jobs
             }
         }
     }
-    
 }

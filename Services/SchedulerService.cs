@@ -70,18 +70,22 @@ namespace ExpressBase.Scheduler
         {
             JobKey jobKey;
             IJobDetail job = null;
-            JobDataMap _dataMap = new JobDataMap();
-            EbJobArgs dat = new EbJobArgs { ObjId = _task.ObjId, Params = _task.Params, SolnId = _task.SolnId, UserId = 1 };
-            _dataMap.Add("args", dat);
+            JobDataMap _dataMap = new JobDataMap();            
+            _dataMap.Add("args", _task.JobArgs);
             if (_task.JobType == JobTypes.EmailTask)
             {
-                jobKey = JobKey.Create("EmailJob" + DateTime.Now);
+                jobKey = JobKey.Create("Email" + DateTime.Now);
                 job = JobBuilder.Create<EmailJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
             else if (_task.JobType == JobTypes.SmsTask)
             {
-                jobKey = JobKey.Create("SmsJob" + DateTime.Now);
+                jobKey = JobKey.Create("Sms" + DateTime.Now);
                 job = JobBuilder.Create<SmsJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
+            }
+            else if(_task.JobType== JobTypes.ReportTask)
+            {
+                jobKey = JobKey.Create("Report" + DateTime.Now);
+                job = JobBuilder.Create<ReportJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
             else if (_task.JobType == JobTypes.MyJob)
             {
