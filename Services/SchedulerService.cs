@@ -49,6 +49,9 @@ namespace ExpressBase.Scheduler
                 IJobDetail job = CreateJob(_task);
                 ITrigger trigger = CreateTrigger(_task);
                 await Scheduler.ScheduleJob(job, trigger);
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine(job.Key + " Job Scheduled");
+                Console.ForegroundColor = ConsoleColor.White;
             }
             catch (Exception e)
             {
@@ -61,7 +64,7 @@ namespace ExpressBase.Scheduler
             ITrigger trigger = TriggerBuilder.Create()
                    .WithIdentity("JobTrigger" + DateTime.Now)
                    .StartNow()
-                  .WithSchedule(CronScheduleBuilder.CronSchedule(_task.Expression))
+                   .WithSchedule(CronScheduleBuilder.CronSchedule(_task.Expression))
                    .Build();
             return trigger;
         }
@@ -70,7 +73,7 @@ namespace ExpressBase.Scheduler
         {
             JobKey jobKey;
             IJobDetail job = null;
-            JobDataMap _dataMap = new JobDataMap();            
+            JobDataMap _dataMap = new JobDataMap();
             _dataMap.Add("args", _task.JobArgs);
             if (_task.JobType == JobTypes.EmailTask)
             {
@@ -82,7 +85,7 @@ namespace ExpressBase.Scheduler
                 jobKey = JobKey.Create("Sms" + DateTime.Now);
                 job = JobBuilder.Create<SmsJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
-            else if(_task.JobType== JobTypes.ReportTask)
+            else if (_task.JobType == JobTypes.ReportTask)
             {
                 jobKey = JobKey.Create("Report" + DateTime.Now);
                 job = JobBuilder.Create<ReportJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();

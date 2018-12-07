@@ -27,7 +27,11 @@ namespace ExpressBase.Scheduler.Jobs
                 UserAuthId = jobArgs.UserAuthId,
                 //MediaUrl = request.MediaUrl
             });
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine("Sms Job queued");
+            Console.ForegroundColor = ConsoleColor.White;
+            
             return Task.FromResult(0);
         }
     }
