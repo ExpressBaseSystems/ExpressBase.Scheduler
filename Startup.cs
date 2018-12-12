@@ -116,7 +116,7 @@ namespace ExpressBase.Scheduler
 
             mqServer.RetryCount = 1;
 
-            mqServer.RegisterHandler<SchedulerRequest>(base.ExecuteMessage);
+            mqServer.RegisterHandler<ScheduleRequest>(base.ExecuteMessage);
 
             mqServer.Start();
 

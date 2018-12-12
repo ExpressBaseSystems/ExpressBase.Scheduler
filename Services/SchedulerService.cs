@@ -35,13 +35,18 @@ namespace ExpressBase.Scheduler
             Scheduler = _sch;
         }
 
-        public SchedulerResponse Any(SchedulerRequest request)
+        public ScheduleResponse Any(ScheduleRequest request)
         {
-            SchedulerResponse resp = new SchedulerResponse();
+            ScheduleResponse resp = new ScheduleResponse();
             TaskExecuter(request.Task).GetAwaiter().GetResult();
             return resp;
         }
-
+        public UnscheduleResponse Any(UnscheduleRequest request)
+        {
+            UnscheduleResponse resp = new UnscheduleResponse();
+            Scheduler.UnscheduleJob(new TriggerKey(request.TriggerKey));
+            return resp;
+        }
         public async Task TaskExecuter(EbTask _task)
         {
             try
@@ -62,7 +67,7 @@ namespace ExpressBase.Scheduler
         public ITrigger CreateTrigger(EbTask _task)
         {
             ITrigger trigger = TriggerBuilder.Create()
-                   .WithIdentity("JobTrigger" + DateTime.Now)
+                   .WithIdentity("Trigger-" + _task.JobArgs.SolnId + "-" + _task.JobArgs.ObjId + "-" + _task.Expression + "-" + DateTime.Now)
                    .StartNow()
                    .WithSchedule(CronScheduleBuilder.CronSchedule(_task.Expression))
                    .Build();
@@ -77,7 +82,7 @@ namespace ExpressBase.Scheduler
             _dataMap.Add("args", _task.JobArgs);
             if (_task.JobType == JobTypes.EmailTask)
             {
-                jobKey = JobKey.Create("Email" + DateTime.Now);
+                jobKey = JobKey.Create("Email_" + DateTime.Now);
                 job = JobBuilder.Create<EmailJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
             else if (_task.JobType == JobTypes.SmsTask)
