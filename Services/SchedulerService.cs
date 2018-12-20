@@ -47,6 +47,7 @@ namespace ExpressBase.Scheduler
             Scheduler.UnscheduleJob(new TriggerKey(request.TriggerKey));
             return resp;
         }
+
         public async Task TaskExecuter(EbTask _task)
         {
             try
@@ -54,6 +55,17 @@ namespace ExpressBase.Scheduler
                 IJobDetail job = CreateJob(_task);
                 ITrigger trigger = CreateTrigger(_task);
                 await Scheduler.ScheduleJob(job, trigger);
+
+                MessageProducer3.Publish(new UpdateSolutionSchedulesRequest()
+                {
+                    Task = _task,
+                    SolnId = _task.JobArgs.SolnId,
+                    UserId = _task.JobArgs.UserId,
+                    UserAuthId = _task.JobArgs.UserAuthId,
+                    JobKey = job.Key.Name,
+                    TriggerKey = trigger.Key.Name
+                });
+
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine(job.Key + " Job Scheduled");
                 Console.ForegroundColor = ConsoleColor.White;
