@@ -63,7 +63,8 @@ namespace ExpressBase.Scheduler
                     UserId = _task.JobArgs.UserId,
                     UserAuthId = _task.JobArgs.UserAuthId,
                     JobKey = job.Key.Name,
-                    TriggerKey = trigger.Key.Name
+                    TriggerKey = trigger.Key.Name,
+                    Status = ScheduleStatuses.Active
                 });
 
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -79,7 +80,7 @@ namespace ExpressBase.Scheduler
         public ITrigger CreateTrigger(EbTask _task)
         {
             ITrigger trigger = TriggerBuilder.Create()
-                   .WithIdentity("Trigger-" + _task.JobArgs.SolnId + "-" + _task.JobArgs.ObjId + "-" + _task.Expression + "-" + DateTime.Now)
+                   .WithIdentity("T-" + _task.JobArgs.SolnId + "-" + _task.JobArgs.ObjId + "-" + _task.Expression + "-" + DateTime.Now)
                    .StartNow()
                    .WithSchedule(CronScheduleBuilder.CronSchedule(_task.Expression))
                    .Build();
