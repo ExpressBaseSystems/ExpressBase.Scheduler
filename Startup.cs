@@ -117,6 +117,7 @@ namespace ExpressBase.Scheduler
             mqServer.RetryCount = 1;
 
             mqServer.RegisterHandler<ScheduleRequest>(base.ExecuteMessage);
+            mqServer.RegisterHandler<DeleteJobRequest>(base.ExecuteMessage);
 
             mqServer.Start();
 

@@ -41,10 +41,24 @@ namespace ExpressBase.Scheduler
             TaskExecuter(request.Task).GetAwaiter().GetResult();
             return resp;
         }
+
+        public RescheduleResponse Any(RescheduleRequest request)
+        {
+            Scheduler.GetJobDetail(new JobKey(request.JobKey));
+            Scheduler.RescheduleJob(new TriggerKey(request.TriggerKey), CreateTrigger(request.Task));
+            return new RescheduleResponse();
+        }
+
         public UnscheduleResponse Any(UnscheduleRequest request)
         {
             UnscheduleResponse resp = new UnscheduleResponse();
             Scheduler.UnscheduleJob(new TriggerKey(request.TriggerKey));
+            return resp;
+        }
+        public DeleteJobResponse Any(DeleteJobRequest request)
+        {
+            DeleteJobResponse resp = new DeleteJobResponse();
+            Scheduler.DeleteJob(new JobKey(request.JobKey));
             return resp;
         }
 
@@ -56,7 +70,7 @@ namespace ExpressBase.Scheduler
                 ITrigger trigger = CreateTrigger(_task);
                 await Scheduler.ScheduleJob(job, trigger);
 
-                MessageProducer3.Publish(new UpdateSolutionSchedulesRequest()
+                MessageProducer3.Publish(new AddSchedulesToSolutionRequest()
                 {
                     Task = _task,
                     SolnId = _task.JobArgs.SolnId,
@@ -64,7 +78,9 @@ namespace ExpressBase.Scheduler
                     UserAuthId = _task.JobArgs.UserAuthId,
                     JobKey = job.Key.Name,
                     TriggerKey = trigger.Key.Name,
-                    Status = ScheduleStatuses.Active
+                    Status = ScheduleStatuses.Active,
+                    ObjId = _task.JobArgs.ObjId,
+                    Name = _task.Name
                 });
 
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
