@@ -118,6 +118,7 @@ namespace ExpressBase.Scheduler
 
             mqServer.RegisterHandler<ScheduleRequest>(base.ExecuteMessage);
             mqServer.RegisterHandler<DeleteJobRequest>(base.ExecuteMessage);
+            mqServer.RegisterHandler<RescheduleRequest>(base.ExecuteMessage);
 
             mqServer.Start();
 
