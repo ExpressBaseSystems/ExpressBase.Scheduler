@@ -21,6 +21,7 @@ using ServiceStack.Redis;
 using System;
 using System.Collections.Specialized;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 //using Quartz;
 //using ServiceStack.Quartz;
 //using ExpressBase.MessageQueue.Services.Quartz;
@@ -165,6 +166,16 @@ namespace ExpressBase.Scheduler
             {
                 return scheduler;
             });
+
+            //Setting Assembly version in Redis
+            var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
+            var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
+            var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
+
+            RedisClient client = new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
+            AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();
+            String version = assembly.Name.ToString() + " - " + assembly.Version.ToString();
+            client.Set("SchedulerAssembly", version);
 
             this.GlobalRequestFilters.Add((req, res, requestDto) =>
         {

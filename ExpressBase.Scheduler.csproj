@@ -18,6 +18,11 @@
     <ProjectReference Include="..\ExpressBase.Objects\ExpressBase.Objects.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Deterministic>false</Deterministic>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="Pages\" />
     <Folder Include="Properties\" />
