@@ -45,7 +45,8 @@ namespace ExpressBase.Scheduler
         public RescheduleResponse Any(RescheduleRequest request)
         {
             Scheduler.GetJobDetail(new JobKey(request.JobKey));
-            Scheduler.RescheduleJob(new TriggerKey(request.TriggerKey), CreateTrigger(request.Task));
+            Task r = Scheduler.RescheduleJob(new TriggerKey(request.TriggerKey), CreateTrigger(request.Task));
+            Console.WriteLine("Job Rescheduled " + request.JobKey + " To " + request.Task.Expression + " At " + DateTime.Now);
             return new RescheduleResponse();
         }
 
@@ -59,6 +60,7 @@ namespace ExpressBase.Scheduler
         {
             DeleteJobResponse resp = new DeleteJobResponse();
             Scheduler.DeleteJob(new JobKey(request.JobKey));
+            Console.WriteLine("Job Deleted " + request.JobKey + " At " + DateTime.Now);
             return resp;
         }
 

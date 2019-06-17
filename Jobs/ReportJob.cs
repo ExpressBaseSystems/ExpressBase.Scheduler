@@ -22,7 +22,7 @@ namespace ExpressBase.Scheduler.Jobs
             });
 
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("Report Job queued. Job: " + context.JobDetail.Key +" trigger: "+context.Trigger.Key);
+            Console.WriteLine("Report Job queued at "+DateTime.Now+" Job: " + context.JobDetail.Key +" trigger: "+context.Trigger.Key);
             Console.ForegroundColor = ConsoleColor.White;
 
             return Task.FromResult(0);
