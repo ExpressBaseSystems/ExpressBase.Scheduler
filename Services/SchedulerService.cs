@@ -121,6 +121,11 @@ namespace ExpressBase.Scheduler
                 jobKey = JobKey.Create("Sms" + DateTime.Now);
                 job = JobBuilder.Create<SmsJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
+            else if (_task.JobType == JobTypes.Slack)
+            {
+                jobKey = JobKey.Create("Slack" + DateTime.Now);
+                job = JobBuilder.Create<SlackJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
+            }
             else if (_task.JobType == JobTypes.ReportTask)
             {
                 jobKey = JobKey.Create("Report" + DateTime.Now);
