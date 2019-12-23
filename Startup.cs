@@ -167,12 +167,22 @@ namespace ExpressBase.Scheduler
                 return scheduler;
             });
 
-            //Setting Assembly version in Redis
+            string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
             var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
 
-            RedisClient client = new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
+            RedisClient client = null;
+            if (env == "Development" || env == "Production")
+            {
+                client = new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
+            }
+            else
+            {
+                client = new RedisClient(redisServer, Convert.ToInt32(redisPort));
+            }
+            //Setting Assembly version in Redis
             AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();
             String version = assembly.Name.ToString() + " - " + assembly.Version.ToString();
             client.Set("SchedulerAssembly", version);

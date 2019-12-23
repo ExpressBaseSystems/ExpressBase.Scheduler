@@ -126,6 +126,11 @@ namespace ExpressBase.Scheduler
                 jobKey = JobKey.Create("Report" + DateTime.Now);
                 job = JobBuilder.Create<ReportJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
+            else if (_task.JobType == JobTypes.SqlTask)
+            {
+                jobKey = JobKey.Create("SqlJob" + DateTime.Now);
+                job = JobBuilder.Create<SqlTask>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
+            }
             else if (_task.JobType == JobTypes.MyJob)
             {
                 jobKey = JobKey.Create("MyJob" + DateTime.Now);
