@@ -174,14 +174,14 @@ namespace ExpressBase.Scheduler
             var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
 
             RedisClient client = null;
-            if (env == "Staging")
-            {
-                client = new RedisClient(redisServer, Convert.ToInt32(redisPort));
-            }
-            else
-            {
-                client = new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
-            }
+            //if (env == "Staging")
+            //{
+            //    client = new RedisClient(redisServer, Convert.ToInt32(redisPort));
+            //}
+            //else
+            //{
+            client = new RedisClient(string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort));
+            //}
             //Setting Assembly version in Redis
             AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();
             String version = assembly.Name.ToString() + " - " + assembly.Version.ToString();
