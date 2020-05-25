@@ -134,7 +134,7 @@ namespace ExpressBase.Scheduler
             });
 
             //****************SCHEDULER********************
-            string conn = string.Format("Server = {0}; Database = {1}; Uid = {2}; Pwd = {3}",
+            string conn = string.Format("Server = {0}; Database = {1}; Uid = {2}; Pwd = {3}; SSL Mode=Require; Use SSL Stream=true;",
                  Environment.GetEnvironmentVariable(EnvironmentConstants.EB_INFRA_DB_SERVER),
                  Environment.GetEnvironmentVariable(EnvironmentConstants.EB_INFRA_DBNAME),
                  Environment.GetEnvironmentVariable(EnvironmentConstants.EB_INFRA_DB_RW_USER),
