@@ -21,7 +21,7 @@ namespace ExpressBase.Scheduler.Jobs
         {
             JobDataMap dataMap = context.MergedJobDataMap;
             EbJobArguments jobArgs = dataMap["args"] as EbJobArguments;
-            MessageProducer.Publish(new EmailAttachmenRequest()
+            MessageProducer.Publish(new EmailAttachmentRequest()
             {
                 ObjId = jobArgs.ObjId,
                 Params = jobArgs.Params,
