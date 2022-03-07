@@ -134,11 +134,12 @@ namespace ExpressBase.Scheduler
             });
 
             //****************SCHEDULER********************
-            string conn = string.Format("Server = {0}; Database = {1}; Uid = {2}; Pwd = {3}; SSL Mode=Require; Use SSL Stream=true;",
+            string conn = string.Format("Server = {0}; Database = {1}; Uid = {2}; Pwd = {3}; Trust Server Certificate=true; Port= {4}; Use SSL Stream=true; SSL Mode=Require;",
                  Environment.GetEnvironmentVariable(EnvironmentConstants.EB_INFRA_DB_SERVER),
                  Environment.GetEnvironmentVariable(EnvironmentConstants.EB_INFRA_DBNAME),
                  Environment.GetEnvironmentVariable(EnvironmentConstants.EB_INFRA_DB_RW_USER),
-                 Environment.GetEnvironmentVariable(EnvironmentConstants.EB_INFRA_DB_RW_PASSWORD));
+                 Environment.GetEnvironmentVariable(EnvironmentConstants.EB_INFRA_DB_RW_PASSWORD),
+                 Environment.GetEnvironmentVariable(EnvironmentConstants.EB_INFRA_DB_PORT));
             var properties = new NameValueCollection
             {
                 ["quartz.serializer.type"] = "json",
@@ -148,14 +149,13 @@ namespace ExpressBase.Scheduler
                 ["quartz.threadPool.threadCount"] = "5",
                 ["quartz.jobStore.misfireThreshold"] = "60000",
                 ["quartz.jobStore.type"] = "Quartz.Impl.AdoJobStore.JobStoreTX, Quartz",
-                ["quartz.jobStore.useProperties"] = "false",
+                ["quartz.jobStore.useProperties"] = "true",
                 ["quartz.jobStore.dataSource"] = "myDS",
                 ["quartz.jobStore.tablePrefix"] = "QRTZ_",
                 ["quartz.jobStore.driverDelegateType"] = "Quartz.Impl.AdoJobStore.PostgreSQLDelegate, Quartz",
                 ["quartz.dataSource.myDS.provider"] = "Npgsql ",
                 ["quartz.dataSource.myDS.connectionString"] = conn
             };
-
 
 
             StdSchedulerFactory factory = new Quartz.Impl.StdSchedulerFactory(properties);

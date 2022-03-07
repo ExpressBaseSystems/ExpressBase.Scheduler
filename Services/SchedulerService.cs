@@ -100,7 +100,7 @@ namespace ExpressBase.Scheduler
             ITrigger trigger = TriggerBuilder.Create()
                    .WithIdentity("T-" + _task.JobArgs.SolnId + "-" + _task.JobArgs.ObjId + "-" + _task.Expression + "-" + DateTime.Now)
                    .StartNow()
-                   .WithSchedule(CronScheduleBuilder.CronSchedule(_task.Expression))
+                   .WithSchedule(CronScheduleBuilder.CronSchedule(_task.Expression).InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Coordinated Universal Time")))                   
                    .Build();
             return trigger;
         }
