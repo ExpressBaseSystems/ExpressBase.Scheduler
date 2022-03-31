@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Scheduler.Jobs
 {
-    public class SqlTask : EbJob, IJob
+    public class SqlJob : EbJob, IJob
     {
         public Task Execute(IJobExecutionContext context)
         {
