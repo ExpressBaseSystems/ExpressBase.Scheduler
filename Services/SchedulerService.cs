@@ -1,20 +1,12 @@
 ﻿using ExpressBase.Common;
-using ExpressBase.Common.Data;
-using ExpressBase.Common.ServiceClients;
-using ExpressBase.Common.Structures;
-using ExpressBase.Objects.Services;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Scheduler.Jobs;
+using Newtonsoft.Json;
 using Quartz;
-using Quartz.Impl;
 using ServiceStack;
 using ServiceStack.Messaging;
 using ServiceStack.RabbitMq;
-using ServiceStack.Redis;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ExpressBase.Scheduler
@@ -45,7 +37,8 @@ namespace ExpressBase.Scheduler
         public RescheduleResponse Any(RescheduleRequest request)
         {
             Scheduler.GetJobDetail(new JobKey(request.JobKey));
-            Task r = Scheduler.RescheduleJob(new TriggerKey(request.TriggerKey), CreateTrigger(request.Task));
+            Scheduler.RescheduleJob(new TriggerKey(request.TriggerKey), CreateTrigger(request.Task));
+
             Console.WriteLine("Job Rescheduled " + request.JobKey + " To " + request.Task.Expression + " At " + DateTime.Now);
             return new RescheduleResponse();
         }
@@ -54,12 +47,14 @@ namespace ExpressBase.Scheduler
         {
             UnscheduleResponse resp = new UnscheduleResponse();
             Scheduler.UnscheduleJob(new TriggerKey(request.TriggerKey));
+
             return resp;
         }
         public DeleteJobResponse Any(DeleteJobRequest request)
         {
             DeleteJobResponse resp = new DeleteJobResponse();
             Scheduler.DeleteJob(new JobKey(request.JobKey));
+
             Console.WriteLine("Job Deleted " + request.JobKey + " At " + DateTime.Now);
             return resp;
         }
@@ -85,9 +80,7 @@ namespace ExpressBase.Scheduler
                     Name = _task.Name
                 });
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine(job.Key + " Job Scheduled");
-                Console.ForegroundColor = ConsoleColor.White;
             }
             catch (Exception e)
             {
@@ -100,7 +93,7 @@ namespace ExpressBase.Scheduler
             ITrigger trigger = TriggerBuilder.Create()
                    .WithIdentity("T-" + _task.JobArgs.SolnId + "-" + _task.JobArgs.ObjId + "-" + _task.Expression + "-" + DateTime.Now)
                    .StartNow()
-                   .WithSchedule(CronScheduleBuilder.CronSchedule(_task.Expression).InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Coordinated Universal Time")))                   
+                   .WithSchedule(CronScheduleBuilder.CronSchedule(_task.Expression)/*.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Coordinated Universal Time"))*/)
                    .Build();
             return trigger;
         }
@@ -109,38 +102,42 @@ namespace ExpressBase.Scheduler
         {
             JobKey jobKey;
             IJobDetail job = null;
+            
             JobDataMap _dataMap = new JobDataMap();
-            _dataMap.Add("args", _task.JobArgs);
+            _dataMap.Add("args", JsonConvert.SerializeObject( _task.JobArgs));
+
+            jobKey = JobKey.Create(((JobTypes)_task.JobType).ToString() + DateTime.Now);
+
             if (_task.JobType == JobTypes.EmailTask)
             {
-                jobKey = JobKey.Create("Email_" + DateTime.Now);
+
                 job = JobBuilder.Create<EmailJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
             else if (_task.JobType == JobTypes.SmsTask)
             {
-                jobKey = JobKey.Create("Sms" + DateTime.Now);
                 job = JobBuilder.Create<SmsJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
             else if (_task.JobType == JobTypes.Slack)
             {
-                jobKey = JobKey.Create("Slack" + DateTime.Now);
                 job = JobBuilder.Create<SlackJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
             else if (_task.JobType == JobTypes.ReportTask)
             {
-                jobKey = JobKey.Create("Report" + DateTime.Now);
                 job = JobBuilder.Create<ReportJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
             else if (_task.JobType == JobTypes.SqlJobTask)
             {
-                jobKey = JobKey.Create("SqlJob" + DateTime.Now);
-                job = JobBuilder.Create<SqlTask>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
+                job = JobBuilder.Create<SqlJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
+            }
+            else if (_task.JobType == JobTypes.ApiTask)
+            {
+                job = JobBuilder.Create<ApiJob>().WithIdentity(jobKey).UsingJobData(_dataMap).Build();
             }
             else if (_task.JobType == JobTypes.MyJob)
             {
-                jobKey = JobKey.Create("MyJob" + DateTime.Now);
                 job = JobBuilder.Create<MyJob>().WithIdentity(jobKey).Build();
             }
+
             return job;
         }
     }
