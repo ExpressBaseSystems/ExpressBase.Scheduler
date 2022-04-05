@@ -26,6 +26,8 @@ namespace ExpressBase.Scheduler.Jobs
                 {
                     JobArgs = jobArgs
                 });
+
+                Console.WriteLine(jobArgs?.RefId + " Executed at " + DateTime.Now);
             }
             catch (Exception e)
             {
