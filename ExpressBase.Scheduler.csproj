@@ -9,7 +9,7 @@
     <PackageReference Include="Quartz" Version="3.3.3" />
     <PackageReference Include="FOSS.ServiceStack.ProtoBuf.Core" Version="5.0.2" />
     <PackageReference Include="FOSS.ServiceStack.Server.Core" Version="5.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.15" />
     <PackageReference Include="Quartz.Serialization.Json" Version="3.3.3" />
   </ItemGroup>
 
